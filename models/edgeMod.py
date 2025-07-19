@@ -56,10 +56,10 @@ class CoreModule(nn.Module):
         attention_vectors_f = attention_vectors_f.unsqueeze(-1).unsqueeze(-1)
         fea_v_out = (feas_f * attention_vectors_f).sum(dim=1)
         return fea_v_out
-class EGRAB(nn.Module):
+class ERAM(nn.Module):
     def __init__(self, conv, n_feat, flag, bias=True, bn=False, act=nn.PReLU()):
 
-        super(EGRAB, self).__init__()
+        super(ERAM, self).__init__()
         self.n_feat = n_feat
         modules_body = []
         for i in range(2):

@@ -59,7 +59,7 @@ class DEAMBlock(nn.Module):
 
         self.dilation = dilation
 
-        self.edge = edgeMod.EGRAB(
+        self.edge = edgeMod.ERAM(
             nn.Conv2d(in_planes, in_planes, 3, stride=1, padding=self.dilation, bias=False, dilation=self.dilation),
             in_planes, 3)
 

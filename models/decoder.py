@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from models import refine, dearnet
+from models import refine, attention
 
 
 class GRM(nn.Module):
@@ -15,8 +15,8 @@ class GRM(nn.Module):
             nn.ReLU()
         )
         self.ref = refine.RefineMod(self.out_d)
-        self.spa = dearnet.SpatialAttention()
-        self.cha = dearnet.ChannelAttention(self.in_d)
+        self.spa = attention.SpatialAttention()
+        self.cha = attention.ChannelAttention(self.in_d)
 
     def forward(self, input):
         x = self.conv1(input)

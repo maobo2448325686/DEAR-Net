@@ -80,12 +80,12 @@ class DEAMBlock(nn.Module):
 
 
 class DEARNet(nn.Module):
-    def __init__(self, backbone='pvtv2', output_stride=16, f_c=64):
+    def __init__(self, backbone_name='pvtv2', output_stride=16, f_c=64):
         super(DEARNet, self).__init__()
         BatchNorm = nn.BatchNorm2d
-        self.backbone = backbone
+        self.backbone_name = backbone_name
 
-        if self.backbone == "pvtv2":
+        if self.backbone_name == "pvtv2":
             # ============================ pvtv2 ============================
             self.backbone = pvt_v2_b2()  # [64, 128, 256, 512]
             path = './data/pretrained/pvt_v2_b2.pth'
@@ -95,7 +95,7 @@ class DEARNet(nn.Module):
             model_dict.update(state_dict)
             self.backbone.load_state_dict(model_dict)
 
-        elif self.backbone == "resnet50":
+        elif self.backbone_name == "resnet50":
             # ============================ ResNet50 ============================
             self.backbone = build_backbone(backbone="resnet50", output_stride=16)
 
@@ -116,7 +116,7 @@ class DEARNet(nn.Module):
                 nn.Upsample(scale_factor=2, mode='bilinear')
             )
 
-        elif self.backbone == "pvtv1":
+        elif self.backbone_name == "pvtv1":
             # ============================ pvtv1 ============================
             self.backbone = pvt_tiny()  # [64, 128, 256, 512]
             path = 'data/pretrained/pvt_tiny.pth'
@@ -126,7 +126,7 @@ class DEARNet(nn.Module):
             model_dict.update(state_dict)
             self.backbone.load_state_dict(model_dict)
 
-        elif self.backbone == "mambavision":
+        elif self.backbone_name == "mambavision":
             # ============================ MambaVision ============================
             model_path = r"data/pretrained/mambavision"
             self.backbone = AutoModel.from_pretrained(model_path, trust_remote_code=True, local_files_only=True)
@@ -187,7 +187,7 @@ class DEARNet(nn.Module):
             p1 = self.backbone(hr_img1)
             p2 = self.backbone(hr_img2)
 
-        if self.backbone == "pvtv2" or self.backbone == "pvtv1":
+        if self.backbone_name == "pvtv2" or self.backbone_name == "pvtv1":
             # ============================ pvtv2 or pvtv1============================
             y_1 = self.decoder(self.depm4(self.up_feature(p1[3])),
                                self.depm1(self.up_feature(p1[0])),
@@ -198,8 +198,11 @@ class DEARNet(nn.Module):
                                self.depm1(self.up_feature(p2[0])),
                                self.depm2(self.up_feature(p2[1])),
                                self.depm3(self.down_channel(self.up_feature(p2[2]))))
+            feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
+            output = torch.sigmoid(feature)
+            return output
 
-        elif self.backbone == "resnet50":
+        elif self.backbone_name == "resnet50":
             # ============================ ResNet50 ============================
             y_1 = self.decoder(self.depm4(self.down_channel4_res50(p1[0])),
                                self.depm1(self.down_channel1_res50(p1[1])),
@@ -210,8 +213,11 @@ class DEARNet(nn.Module):
                                self.depm1(self.down_channel1_res50(p2[1])),
                                self.depm2(self.down_channel2_res50(p2[2])),
                                self.depm3(self.down_channel3_res50(p2[3])))
+            feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
+            output = torch.sigmoid(feature)
+            return output
 
-        elif self.backbone == "mambavision":
+        elif self.backbone_name == "mambavision":
             # ============================ MambaVision ============================
             y_1 = self.decoder(self.depm4(self.up_feature_m4(p1[3])),
                                self.depm1(self.up_feature_m1(p1[0])),
@@ -222,8 +228,7 @@ class DEARNet(nn.Module):
                                self.depm1(self.up_feature_m1(p2[0])),
                                self.depm2(self.up_feature_m2(p2[1])),
                                self.depm3(self.up_feature_m3(p2[2])))
+            feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
+            output = torch.sigmoid(feature)
+            return output
 
-        feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
-        output = torch.sigmoid(feature)
-
-        return output

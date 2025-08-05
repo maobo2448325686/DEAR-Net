@@ -204,30 +204,30 @@ class DEARNet(nn.Module):
 
         elif self.backbone_name == "resnet50":
             # ============================ ResNet50 ============================
-            y_1 = self.decoder(self.depm4(self.down_channel4_res50(p1[0])),
-                               self.depm1(self.down_channel1_res50(p1[1])),
-                               self.depm2(self.down_channel2_res50(p1[2])),
-                               self.depm3(self.down_channel3_res50(p1[3])))
+            y_1 = self.decoder(self.deam4(self.down_channel4_res50(p1[0])),
+                               self.deam1(self.down_channel1_res50(p1[1])),
+                               self.deam2(self.down_channel2_res50(p1[2])),
+                               self.deam3(self.down_channel3_res50(p1[3])))
 
-            y_2 = self.decoder(self.depm4(self.down_channel4_res50(p2[0])),
-                               self.depm1(self.down_channel1_res50(p2[1])),
-                               self.depm2(self.down_channel2_res50(p2[2])),
-                               self.depm3(self.down_channel3_res50(p2[3])))
+            y_2 = self.decoder(self.deam4(self.down_channel4_res50(p2[0])),
+                               self.deam1(self.down_channel1_res50(p2[1])),
+                               self.deam2(self.down_channel2_res50(p2[2])),
+                               self.deam3(self.down_channel3_res50(p2[3])))
             feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
             output = torch.sigmoid(feature)
             return output
 
         elif self.backbone_name == "mambavision":
             # ============================ MambaVision ============================
-            y_1 = self.decoder(self.depm4(self.up_feature_m4(p1[3])),
-                               self.depm1(self.up_feature_m1(p1[0])),
-                               self.depm2(self.up_feature_m2(p1[1])),
-                               self.depm3(self.up_feature_m3(p1[2])))
+            y_1 = self.decoder(self.deam4(self.up_feature_m4(p1[3])),
+                               self.deam1(self.up_feature_m1(p1[0])),
+                               self.deam2(self.up_feature_m2(p1[1])),
+                               self.deam3(self.up_feature_m3(p1[2])))
 
-            y_2 = self.decoder(self.depm4(self.up_feature_m4(p2[3])),
-                               self.depm1(self.up_feature_m1(p2[0])),
-                               self.depm2(self.up_feature_m2(p2[1])),
-                               self.depm3(self.up_feature_m3(p2[2])))
+            y_2 = self.decoder(self.deam4(self.up_feature_m4(p2[3])),
+                               self.deam1(self.up_feature_m1(p2[0])),
+                               self.deam2(self.up_feature_m2(p2[1])),
+                               self.deam3(self.up_feature_m3(p2[2])))
             feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
             output = torch.sigmoid(feature)
             return output

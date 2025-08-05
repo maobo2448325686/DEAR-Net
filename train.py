@@ -77,8 +77,8 @@ def train(input_train, input_val, model_dir, load_model, network_name, batch_siz
 
         # model saving and val set evaluation
         if epoch % 1 == 0:
-            output_name = model_dir + '/data_name_' + str(epoch) + model_name
-            best_output_name = model_dir + "BEST_" + str(epoch) + model_name
+            output_name = model_dir + '/last_' + model_name
+            best_output_name = model_dir + "/best" + model_name
             state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(), 'epoch': epoch}
             torch.save(state, output_name)
 

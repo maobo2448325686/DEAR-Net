@@ -18,6 +18,31 @@ The released code includes implementations with different backbones as described
 
 4. **SYSU-CD:** Q. Shi et al., “A deeply supervised attention metric-based network and an open aerial image dataset for remote sensing change detection,” IEEE Trans. Geosci. Remote Sens., vol. 60, pp. 1-16, 2022. (URL：[DSAMNet: A Deeply Supervised Attention Metric Based Network for Change Detection of High-Resolution Images | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9555146))
 
+
+
+------
+
+#### Data
+
+```
+Data/
+├── train/
+│   ├── images/
+│   │   ├── t1/
+│   │   └── t2/
+│   └── label/
+├── val/
+│   ├── images/
+│   │   ├── t1/
+│   │   └── t2/
+│   └── label/
+└── test/
+    ├── images/
+    │   ├── t1/
+    │   └── t2/
+    └── label/
+```
+
 ### Comparative Experimental Models 
 
 1. **FC-EF、FC-EF-Conc、FC-EF-Diff:** "Fully convolutional siamese networks for change detection" Code: https://github.com/rcdaudt/fully_convolutional_change_detection

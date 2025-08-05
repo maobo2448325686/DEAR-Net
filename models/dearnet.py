@@ -1,8 +1,11 @@
 import torch
 import torch.nn as nn
 from decoder import decoder_grm
+from models.pvtv1 import pvt_tiny
+from models.resnet import build_backbone
 from pvtv2 import pvt_v2_b2
 from models import edgeMod
+from transformers import AutoModel
 
 
 class ChannelAttention(nn.Module):
@@ -77,18 +80,72 @@ class DEAMBlock(nn.Module):
 
 
 class DEARNet(nn.Module):
-    def __init__(self, backbone='pvt', output_stride=16, f_c=64, freeze_bn=False, in_c=3):
+    def __init__(self, backbone='pvtv2', output_stride=16, f_c=64):
         super(DEARNet, self).__init__()
         BatchNorm = nn.BatchNorm2d
+        self.backbone = backbone
 
-        # pvt
-        self.backbone_pvt = pvt_v2_b2()  # [64, 128, 256, 512]
-        path = './data/pretrained/pvt_v2_b2.pth'
-        save_model = torch.load(path)
-        model_dict = self.backbone_pvt.state_dict()
-        state_dict = {k: v for k, v in save_model.items() if k in model_dict.keys()}
-        model_dict.update(state_dict)
-        self.backbone_pvt.load_state_dict(model_dict)
+        if self.backbone == "pvtv2":
+            # ============================ pvtv2 ============================
+            self.backbone = pvt_v2_b2()  # [64, 128, 256, 512]
+            path = './data/pretrained/pvt_v2_b2.pth'
+            save_model = torch.load(path)
+            model_dict = self.backbone.state_dict()
+            state_dict = {k: v for k, v in save_model.items() if k in model_dict.keys()}
+            model_dict.update(state_dict)
+            self.backbone.load_state_dict(model_dict)
+
+        elif self.backbone == "resnet50":
+            # ============================ ResNet50 ============================
+            self.backbone = build_backbone(backbone="resnet50", output_stride=16)
+
+            self.down_channel1_res50 = nn.Sequential(
+                nn.Conv2d(256, 64, 1),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+            self.down_channel2_res50 = nn.Sequential(
+                nn.Conv2d(512, 128, 1),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+            self.down_channel3_res50 = nn.Sequential(
+                nn.Conv2d(1024, 256, 1),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+            self.down_channel4_res50 = nn.Sequential(
+                nn.Conv2d(2048, 512, 1),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+
+        elif self.backbone == "pvtv1":
+            # ============================ pvtv1 ============================
+            self.backbone = pvt_tiny()  # [64, 128, 256, 512]
+            path = 'data/pretrained/pvt_tiny.pth'
+            save_model = torch.load(path)
+            model_dict = self.backbone.state_dict()
+            state_dict = {k: v for k, v in save_model.items() if k in model_dict.keys()}
+            model_dict.update(state_dict)
+            self.backbone.load_state_dict(model_dict)
+
+        elif self.backbone == "mambavision":
+            # ============================ MambaVision ============================
+            model_path = r"data/pretrained/mambavision"
+            self.backbone = AutoModel.from_pretrained(model_path, trust_remote_code=True, local_files_only=True)
+
+            self.up_feature_m1 = nn.Sequential(
+                nn.Conv2d(80, 64, 1, bias=False),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+            self.up_feature_m2 = nn.Sequential(
+                nn.Conv2d(160, 128, 1, bias=False),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+            self.up_feature_m3 = nn.Sequential(
+                nn.Conv2d(320, 256, 1, bias=False),
+                nn.Upsample(scale_factor=2, mode='bilinear')
+            )
+            self.up_feature_m4 = nn.Sequential(
+                nn.Conv2d(640, 512, 1, bias=False),
+                nn.Upsample(scale_factor=2, mode='bilinear'))
 
         self.decoder = decoder_grm(f_c, BatchNorm)
 
@@ -123,20 +180,50 @@ class DEARNet(nn.Module):
         )
 
     def forward(self, hr_img1, hr_img2):
-        p1 = self.backbone_pvt(hr_img1)
-        p2 = self.backbone_pvt(hr_img2)
+        if self.backbone == "mambavision":
+            _, p1 = self.backbone(hr_img1)
+            _, p2 = self.backbone(hr_img2)
+        else:
+            p1 = self.backbone(hr_img1)
+            p2 = self.backbone(hr_img2)
 
-        y_1 = self.decoder(self.depm4(self.up_feature(p1[3])),
-                           self.depm1(self.up_feature(p1[0])),
-                           self.depm2(self.up_feature(p1[1])),
-                           self.depm3(self.down_channel(self.up_feature(p1[2]))))
+        if self.backbone == "pvtv2" or self.backbone == "pvtv1":
+            # ============================ pvtv2 or pvtv1============================
+            y_1 = self.decoder(self.depm4(self.up_feature(p1[3])),
+                               self.depm1(self.up_feature(p1[0])),
+                               self.depm2(self.up_feature(p1[1])),
+                               self.depm3(self.down_channel(self.up_feature(p1[2]))))
 
-        y_2 = self.decoder(self.depm4(self.up_feature(p2[3])),
-                           self.depm1(self.up_feature(p2[0])),
-                           self.depm2(self.up_feature(p2[1])),
-                           self.depm3(self.down_channel(self.up_feature(p2[2]))))
+            y_2 = self.decoder(self.depm4(self.up_feature(p2[3])),
+                               self.depm1(self.up_feature(p2[0])),
+                               self.depm2(self.up_feature(p2[1])),
+                               self.depm3(self.down_channel(self.up_feature(p2[2]))))
+
+        elif self.backbone == "resnet50":
+            # ============================ ResNet50 ============================
+            y_1 = self.decoder(self.depm4(self.down_channel4_res50(p1[0])),
+                               self.depm1(self.down_channel1_res50(p1[1])),
+                               self.depm2(self.down_channel2_res50(p1[2])),
+                               self.depm3(self.down_channel3_res50(p1[3])))
+
+            y_2 = self.decoder(self.depm4(self.down_channel4_res50(p2[0])),
+                               self.depm1(self.down_channel1_res50(p2[1])),
+                               self.depm2(self.down_channel2_res50(p2[2])),
+                               self.depm3(self.down_channel3_res50(p2[3])))
+
+        elif self.backbone == "mambavision":
+            # ============================ MambaVision ============================
+            y_1 = self.decoder(self.depm4(self.up_feature_m4(p1[3])),
+                               self.depm1(self.up_feature_m1(p1[0])),
+                               self.depm2(self.up_feature_m2(p1[1])),
+                               self.depm3(self.up_feature_m3(p1[2])))
+
+            y_2 = self.decoder(self.depm4(self.up_feature_m4(p2[3])),
+                               self.depm1(self.up_feature_m1(p2[0])),
+                               self.depm2(self.up_feature_m2(p2[1])),
+                               self.depm3(self.up_feature_m3(p2[2])))
 
         feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
         output = torch.sigmoid(feature)
 
-        return output, feature
+        return output

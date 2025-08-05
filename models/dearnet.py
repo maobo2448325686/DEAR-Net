@@ -189,15 +189,15 @@ class DEARNet(nn.Module):
 
         if self.backbone_name == "pvtv2" or self.backbone_name == "pvtv1":
             # ============================ pvtv2 or pvtv1============================
-            y_1 = self.decoder(self.depm4(self.up_feature(p1[3])),
-                               self.depm1(self.up_feature(p1[0])),
-                               self.depm2(self.up_feature(p1[1])),
-                               self.depm3(self.down_channel(self.up_feature(p1[2]))))
+            y_1 = self.decoder(self.deam4(self.up_feature(p1[3])),
+                               self.deam1(self.up_feature(p1[0])),
+                               self.deam2(self.up_feature(p1[1])),
+                               self.deam3(self.down_channel(self.up_feature(p1[2]))))
 
-            y_2 = self.decoder(self.depm4(self.up_feature(p2[3])),
-                               self.depm1(self.up_feature(p2[0])),
-                               self.depm2(self.up_feature(p2[1])),
-                               self.depm3(self.down_channel(self.up_feature(p2[2]))))
+            y_2 = self.decoder(self.deam4(self.up_feature(p2[3])),
+                               self.deam1(self.up_feature(p2[0])),
+                               self.deam2(self.up_feature(p2[1])),
+                               self.deam3(self.down_channel(self.up_feature(p2[2]))))
             feature = self.conv_final(torch.cat([y_1, y_2], dim=1))
             output = torch.sigmoid(feature)
             return output

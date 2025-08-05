@@ -136,7 +136,7 @@ if __name__ == '__main__':
     data_train_dir = data_A_dir + r'/train/images'
     data_val_dir = data_A_dir + r'/val/images'
     data_test_dir = data_A_dir + r'/test/images'
-    network_name = DEARNet(backbone="pvtv2")
+    network_name = DEARNet(backbone_name="pvtv2")
     batch_size = 4
 
     ### train&val

@@ -54,6 +54,16 @@ Data/
 7. **DCIL-Net:** "Dual-branch cross-resolution interaction learning network for change detection at different resolutions" Code: https://github.com/Li738/DCILNet
 8. **MambaBCD:** "ChangeMamba: Remote sensing change detection with spatiotemporal state space model" Code: https://github.com/ChenHongruixuan/ChangeMamba
 9. **CDMamba:** "CDMamba: Incorporating local clues into Mamba for remote sensing image binary change detection" Code: https://github.com/zmoka-zht/CDMamba
+10. **TSMS-Net:** "A two-stage multiscale network for high-resolution remote sensing images change detection" Code: https://github.com/xbddl/TSMSNet
+11. **TMSF-Net:** "A novel transformer-based multiscale siamese framework for high-resolution remote sensing change detection" Code: https://github.com/ljwang8/TMSF
+
+
+
+### Loss Curve
+
+![loss curve](./images/four_loss_curves.jpg)
+
+
 
 ### backbone weights 
 1. **pvt_v2：** https://pan.baidu.com/s/1Z6HbSse1E_dPE3Uod0RK5g  Code: 5588

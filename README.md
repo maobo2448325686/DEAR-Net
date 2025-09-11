@@ -9,6 +9,16 @@ The released code includes implementations with different backbones as described
 
 
 
+### Environment
+
+python==3.8.0
+
+torch == 1.10.0; torchvision==0.11.0
+
+timm == 1.0.15
+
+
+
 ### Datasets 
 1. **LEVIR:** H. Chen and Z. Shi, “A spatial-temporal attention-based method and a new dataset for remote sensing image change detection,” *Remote Sens*, vol. 12, no. 10, p. 1662, May. 2020. (URL: [A Spatial-Temporal Attention-Based Method and a New Dataset for Remote Sensing Image Change Detection](https://www.mdpi.com/2072-4292/12/10/1662))
 

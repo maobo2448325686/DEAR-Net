@@ -21,14 +21,8 @@ timm == 1.0.15
 
 ### Datasets 
 1. **LEVIR:** H. Chen and Z. Shi, “A spatial-temporal attention-based method and a new dataset for remote sensing image change detection,” *Remote Sens*, vol. 12, no. 10, p. 1662, May. 2020. (URL: [A Spatial-Temporal Attention-Based Method and a New Dataset for Remote Sensing Image Change Detection](https://www.mdpi.com/2072-4292/12/10/1662))
-
 2. **WHU:** S. Ji, S. Wei, and M. Lu, “Fully convolutional networks for multisource building extraction from an open aerial and satellite imagery data set,” *IEEE Trans. Geosci. Remote Sens*, vol. 57, no. 1, pp. 574-586, Aug. 2019. (URL: [Fully Convolutional Networks for Multisource Building Extraction From an Open Aerial and Satellite Imagery Data Set | IEEE Journals & Magazine | IEEE Xplore](https://ieeexplore.ieee.org/document/8444434))
-
 3. **Lebedev:** M. A. Lebedev, Y. V. Vizilter, O. V. Vygolov, V. A. Knyaz, and A. Y. Rubis, “Change detection in remote sensing images using conditional adversarial networks," *Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci.*, vol. XLII-2, pp. 565-571, May. 2018. (URL: [ISPRS-Archives - CHANGE DETECTION IN REMOTE SENSING IMAGES USING CONDITIONAL ADVERSARIAL NETWORKS](https://isprs-archives.copernicus.org/articles/XLII-2/565/2018/))
-
-4. **SYSU-CD:** Q. Shi et al., “A deeply supervised attention metric-based network and an open aerial image dataset for remote sensing change detection,” IEEE Trans. Geosci. Remote Sens., vol. 60, pp. 1-16, 2022. (URL：[DSAMNet: A Deeply Supervised Attention Metric Based Network for Change Detection of High-Resolution Images | IEEE Conference Publication | IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9555146))
-
-
 
 ------
 
@@ -66,12 +60,6 @@ Data/
 9. **CDMamba:** "CDMamba: Incorporating local clues into Mamba for remote sensing image binary change detection" Code: https://github.com/zmoka-zht/CDMamba
 10. **TSMS-Net:** "A two-stage multiscale network for high-resolution remote sensing images change detection" Code: https://github.com/xbddl/TSMSNet
 11. **TMSF-Net:** "A novel transformer-based multiscale siamese framework for high-resolution remote sensing change detection" Code: https://github.com/ljwang8/TMSF
-
-
-
-### Loss Curve
-
-![loss curve](./images/four_loss_curves.jpg)
 
 
 
